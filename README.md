@@ -25,14 +25,13 @@ Android wellness assistant: Kotlin · Jetpack Compose · Material 3 · MVVM · R
    - `MODEL`: `claude-sonnet-5-5` (or another model available to your Anthropic account).
    Mark credentials as sensitive. Never commit them or put them in the Android app.
 3. Deploy, then check `https://<your-vercel-domain>/health`. It should return `{"ok":true}`.
-4. In `gradle.properties`, set `BACKEND_URL` to your Vercel URL with a trailing slash, for example
-   `https://your-project.vercel.app/`, then rebuild the Android app.
+4. The default `BACKEND_URL` in `gradle.properties` is set to the deployed Vercel URL. If Vercel
+   assigned a different domain, update it there and rebuild the Android app.
 
 ## Run on Android
-Open the folder in Android Studio, sync, and run on an emulator. For local backend development, the
-emulator reaches your PC at `10.0.2.2` (the default in `gradle.properties`). For a physical phone or
-the Vercel backend, set `BACKEND_URL` to the server URL with a trailing slash. Deployed backends must
-use HTTPS.
+Open the folder in Android Studio, sync, and run on an emulator. The default `BACKEND_URL` points to
+the Vercel backend. For local backend development on an emulator, change it to
+`http://10.0.2.2:3000/`. Physical phones and deployed backends should use HTTPS.
 
 ## Security
 - The AI key stays in `backend/.env` locally or Vercel's sensitive environment variable; the app sends a
