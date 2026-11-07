@@ -5,8 +5,14 @@ const rateLimit = require("express-rate-limit");
 const admin = require("firebase-admin");
 
 const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== "false";
-if (REQUIRE_AUTH) admin.initializeApp({ credential: admin.credential.applicationDefault() });
-if (!process.env.ANTHROPIC_API_KEY) { console.error("Missing ANTHROPIC_API_KEY"); process.exit(1); }
+if (REQUIRE_AUTH) {
+  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+  admin.initializeApp({
+    credential: serviceAccount
+      ? admin.credential.cert(JSON.parse(serviceAccount))
+      : admin.credential.applicationDefault()
+  });
+}
 
 const SYSTEM = `You are MediCare AI, a general health and wellness education assistant for people in India.
 Rules you must always follow:
@@ -49,6 +55,9 @@ app.post("/api/chat", auth, async (req, res) => {
   if (EMERGENCY.test(last) && !/^(what|define|explain)\b/i.test(last.trim()))
     return res.json({ emergency: true, reply: "This may be an emergency. Please call 112 now or go to the nearest emergency department. If you are thinking about harming yourself, call 112 or Tele-MANAS (14416) right away." });
 
+  if (!process.env.ANTHROPIC_API_KEY)
+    return res.status(503).json({ error: "AI service is not configured" });
+
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -62,4 +71,12 @@ app.post("/api/chat", auth, async (req, res) => {
   } catch (e) { console.error("Upstream error"); res.status(502).json({ error: "AI service unavailable" }); }
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("MediCare AI backend running"));
+if (require.main === module) {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("Missing ANTHROPIC_API_KEY");
+    process.exit(1);
+  }
+  app.listen(process.env.PORT || 3000, () => console.log("MediCare AI backend running"));
+}
+
+module.exports = app;

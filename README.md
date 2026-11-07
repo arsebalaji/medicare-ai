@@ -15,26 +15,27 @@ Android wellness assistant: Kotlin · Jetpack Compose · Material 3 · MVVM · R
    Add your Anthropic API key to `backend/.env`, save your Firebase service-account key as
    `backend/serviceAccount.json`, then run `npm start` from `backend/`. Check http://localhost:3000/health.
 
-## Deploy the backend to Render
-1. Push this repository to GitHub. In Render, choose **New → Blueprint** and connect the repository.
-   Set the Blueprint Path to `MediCareAI/render.yaml` (the repository also contains the older web project).
-2. Enter your Anthropic API key when prompted for `ANTHROPIC_API_KEY`.
-3. After the service is created, open **Environment → Secret Files**, add a file named
-   `serviceAccount.json`, and paste the Firebase service-account JSON into it. Save the change and
-   redeploy. Do not commit this file or put its contents in the Android app.
-4. Wait for the deploy to finish, then open `https://<your-render-service>.onrender.com/health`.
-   It should return `{"ok":true}`. The free service may take a little time to wake after inactivity.
-5. In `gradle.properties`, change `BACKEND_URL` to your Render URL with a trailing slash, for example
-   `https://medicare-ai-backend.onrender.com/`, then rebuild the Android app.
+## Deploy the backend to Vercel
+1. Import this GitHub repository into Vercel. In the project's settings, set **Root Directory** to
+   `backend`. Vercel detects the Express app exported from `server.js`.
+2. In **Settings → Environment Variables**, add:
+   - `ANTHROPIC_API_KEY`: your Anthropic API key.
+   - `FIREBASE_SERVICE_ACCOUNT`: the full contents of your Firebase service-account JSON file.
+   - `REQUIRE_AUTH`: `true`.
+   - `MODEL`: `claude-sonnet-5-5` (or another model available to your Anthropic account).
+   Mark credentials as sensitive. Never commit them or put them in the Android app.
+3. Deploy, then check `https://<your-vercel-domain>/health`. It should return `{"ok":true}`.
+4. In `gradle.properties`, set `BACKEND_URL` to your Vercel URL with a trailing slash, for example
+   `https://your-project.vercel.app/`, then rebuild the Android app.
 
 ## Run on Android
 Open the folder in Android Studio, sync, and run on an emulator. For local backend development, the
 emulator reaches your PC at `10.0.2.2` (the default in `gradle.properties`). For a physical phone or
-the Render backend, set `BACKEND_URL` to the server URL with a trailing slash. Deployed backends must
+the Vercel backend, set `BACKEND_URL` to the server URL with a trailing slash. Deployed backends must
 use HTTPS.
 
 ## Security
-- The AI key stays in `backend/.env` locally or Render's secret environment variable; the app sends a
+- The AI key stays in `backend/.env` locally or Vercel's sensitive environment variable; the app sends a
   Firebase ID token, which the server verifies.
 - Health data stays in a local Room DB; the AI receives only the last 10 chat messages (never your profile).
 - Chat history can be turned off or cleared; "Delete all my data" wipes everything.
