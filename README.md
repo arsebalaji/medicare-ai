@@ -33,6 +33,13 @@ Open the folder in Android Studio, sync, and run on an emulator. The default `BA
 the Vercel backend. For local backend development on an emulator, change it to
 `http://10.0.2.2:3000/`. Physical phones and deployed backends should use HTTPS.
 
+## Browser preview
+Open `preview/index.html` in a browser to try the interactive UI demo. Navigation, sample chat
+responses, medicine and appointment lists, wellness tracking, profile, history, symptom guidance,
+emergency information, and settings are available. Changes are saved in that browser's local storage.
+This is a demo only: it does not connect to Firebase or the AI backend, send notifications, read phone
+sensors, or place calls.
+
 ## Security
 - The AI key stays in `backend/.env` locally or Vercel's sensitive environment variable; the app sends a
   Firebase ID token, which the server verifies.
