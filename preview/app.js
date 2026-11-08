@@ -6,7 +6,7 @@ const today = () => toDateKey(new Date());
 const makeId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const defaultState = () => ({
   route: "home",
-  name: "Afroz",
+  name: "Balaji",
   profile: {},
   meds: [
     { id: makeId(), name: "Paracetamol", schedule: "As prescribed", times: "08:00", status: "PENDING" },
@@ -51,6 +51,11 @@ function persist() {
   } catch {
     state.notice = "Couldn't save changes in this browser. Check available local storage.";
   }
+}
+
+if (state.name === "Afroz") {
+  state.name = "Balaji";
+  persist();
 }
 
 function go(route) {
