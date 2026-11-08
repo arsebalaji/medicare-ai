@@ -53,7 +53,7 @@ function persist() {
   }
 }
 
-if (state.name === "Afroz") {
+if (["afroz", "balaji"].includes(String(state.name).toLowerCase())) {
   state.name = "Balaji";
   persist();
 }
